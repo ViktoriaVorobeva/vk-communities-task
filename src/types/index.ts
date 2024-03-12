@@ -44,3 +44,7 @@ export interface FilterProps {
   id: string;
   onChange: (event: ChangeEvent<HTMLSelectElement>, id: string) => void;
 }
+
+export interface LocalStorageState {
+  groups: GroupType[];
+}

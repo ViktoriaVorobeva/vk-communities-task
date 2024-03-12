@@ -17,34 +17,37 @@ const WITHOUTDATA: GetGroupsResponse = {
 
 const variants = [ZERORESULT, MOCKSRESULT, WITHOUTDATA];
 
+// вариант запроса для вариации всех типов ошибок
+// export const fetcher = (): Promise<GetGroupsResponse> => {
+//   return new Promise((resolve, reject) => {
+//     setTimeout(() => {
+//       const randomIdx = Math.floor(Math.random() * 4);
+//       if (randomIdx === 3) {
+//         reject("error");
+//       }
+//       resolve(variants[randomIdx]);
+//     }, DELAY);
+//   });
+// };
+
+// упрощенный вариант запроса (постоянно резолвится)
 export const fetcher = (): Promise<GetGroupsResponse> => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     setTimeout(() => {
-      const randomIdx = Math.floor(Math.random() * 4);
-      if (randomIdx === 3) {
-        reject("error");
-      }
-      resolve(variants[randomIdx]);
+      resolve(MOCKSRESULT);
     }, DELAY);
   });
 };
 
 export const request = (): Promise<GetGroupsResponse> => {
-  return fetcher()
-    .then((response) => {
-      if (response.result === 0) {
-        console.log('zero')
-        throw new Error("zero result");
-      }
+  return fetcher().then((response) => {
+    if (response.result === 0) {
+      throw new Error("zero result");
+    }
 
-      if (!response.data) {
-        console.log('not found data')
-        throw new Error("not found data");
-      }
-      return response;
-    })
-    .catch((reason) => {
-      console.log('other')
-      throw new Error(reason);
-    });
+    if (!response.data) {
+      throw new Error("not found data");
+    }
+    return response;
+  });
 };

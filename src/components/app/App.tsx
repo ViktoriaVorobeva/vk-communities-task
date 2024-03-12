@@ -6,6 +6,10 @@ import { GroupsContext } from "./groupsContext";
 import { request } from "../../utils/api";
 import { Filters } from "../filters/filters";
 import { FiltersContext } from "./filtersContext";
+import {
+  getResultFromLocalStorage,
+  saveResultInLocalStorage,
+} from "../../utils/localStorage";
 
 const initialFilters = {
   privacy: "all",
@@ -42,16 +46,18 @@ function App() {
       }
 
       if (friends !== "all") {
+        const result =
+          group.friends !== undefined && group.friends.length !== 0;
         if (friends === "yes") {
-          isFriends = group.friends !== undefined && group.friends.length !== 0;
+          isFriends = result;
         } else {
-          isFriends = group.friends === undefined || group.friends.length === 0;
+          isFriends = !result;
         }
       }
 
       return isPrivacy && isColor && isFriends;
     });
-    return filteredGroups || [];
+    return filteredGroups;
   };
 
   const groupHandler = async () => {
@@ -59,7 +65,9 @@ function App() {
     try {
       const data = await request();
       if (data.data) {
-        setGroups(data.data);
+        const groups = data.data;
+        setGroups(groups);
+        saveResultInLocalStorage("groups", { groups });
       }
       setError(false);
     } catch {
@@ -73,6 +81,7 @@ function App() {
   }, []);
 
   useEffect(() => {
+    const { groups } = getResultFromLocalStorage("groups");
     const filteredGroups = filterGroups(groups, filters);
     setGroups(filteredGroups);
   }, [filters]);
@@ -87,7 +96,7 @@ function App() {
               <GroupList />
             </>
           )}
-          {!isLoading && !isError && groups.length === 0 && (
+          {!isError && groups.length === 0 && (
             <>
               <Filters setFilters={setFilters} />
               <p className="not-found">По запросу группы не найдены</p>
