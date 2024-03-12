@@ -1,0 +1,11 @@
+.error {
+    color: red;
+}
+
+.loading {
+    color: blueviolet;
+}
+
+.not-found {
+    color: black;
+}

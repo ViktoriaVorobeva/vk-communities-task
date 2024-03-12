@@ -1,4 +1,4 @@
-[
+export const mocks = [
     {
       "id": 1,
       "name": "Котики",
